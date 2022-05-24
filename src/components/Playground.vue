@@ -40,9 +40,14 @@
 
 <script setup>
 import loader from "@monaco-editor/loader";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import Resizer2 from "./Resizer2.vue";
 import Resizer3 from "./Resizer3.vue";
+import { usePlaygroundStore } from '../store/Playground';
+
+// STORE
+
+const playgroundStore = usePlaygroundStore();
 
 // PROPS
 const props = defineProps({
@@ -63,9 +68,9 @@ const storagedTheme = ref("");
 const storagedView = ref("");
 const playground = ref(null);
 
-const htmlValue = ref("");
-const cssValue = ref("");
-const jsValue = ref("");
+const htmlCode = computed(() => playgroundStore.htmlValue);
+const cssCode = computed(() => playgroundStore.cssValue);
+const jsCode = computed(() => playgroundStore.jsValue);
 
 const counter = ref(0);
 
@@ -114,16 +119,16 @@ const loadMonacoHTML = () => {
   loader.init().then((monaco) => {
     const monacoHTML = $(`#monaco-editor-html`);
     let editor = monaco.editor.create(monacoHTML, {
-      value: "",
+      value: htmlCode.value,
       language: "html",
       theme: `${theme || storagedTheme.value}`,
       automaticLayout: true,
     });
     monacoHTML.addEventListener("keypress", () => {
       setTimeout(() => {
-        htmlValue.value = editor.getValue();
+        playgroundStore.writeHTML(editor.getValue());
         update();
-      }, 500);
+      }, 100);
     });
   });
 };
@@ -131,14 +136,14 @@ const loadMonacoJavascript = () => {
   loader.init().then((monaco) => {
     const monacoJS = $(`#monaco-editor-javascript`);
     let editor = monaco.editor.create(monacoJS, {
-      value: "",
+      value: jsCode.value,
       language: "javascript",
       theme: `${theme || storagedTheme.value}`,
       automaticLayout: true,
     });
-    jsValue.value = editor.getValue();
     let counterInterval = null;
     monacoJS.addEventListener("keypress", () => {
+      playgroundStore.writeJS(editor.getValue());
       counter.value = 0;
       clearInterval(counterInterval);
       counterInterval = setInterval(() => (counter.value += 1), 1000);
@@ -160,17 +165,16 @@ const loadMonacoCSS = () => {
   loader.init().then((monaco) => {
     const monacoCSS = $(`#monaco-editor-css`);
     let editor = monaco.editor.create(monacoCSS, {
-      value: "",
+      value: cssCode.value,
       language: "css",
       theme: `${theme || storagedTheme.value}`,
       automaticLayout: true,
     });
-    cssValue.value = editor.getValue();
     monacoCSS.addEventListener("keypress", () => {
       setTimeout(() => {
-        cssValue.value = editor.getValue();
+        playgroundStore.writeCSS(editor.getValue());
         update();
-      }, 500);
+      }, 100);
     });
   });
 };
@@ -179,11 +183,11 @@ const createHTML = () => {
   return `
   <html>
     <head>
-      <style>${cssValue.value}</style>
+      <style>${cssCode.value}</style>
     </head>
     <body>
-    ${htmlValue.value}
-      <script>${jsValue.value}<\/script>
+    ${htmlCode.value}
+      <script>${jsCode.value}<\/script>
     </body>
   </html>`;
 };
@@ -194,6 +198,7 @@ onMounted(() => {
   loadView();
   loadTheme();
   reloadMonaco();
+  update();
 });
 </script>
 

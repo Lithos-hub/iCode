@@ -1,6 +1,6 @@
 <template>
   <Navbar @set-theme="setTheme" @set-view="setView" />
-  <Playground :theme="themeToSet" :view="viewToSet" :key="componentKey" />
+  <Playground :theme="theme" :view="view" :key="componentKey" />
 </template>
 
 <script setup>

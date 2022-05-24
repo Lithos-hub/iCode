@@ -23,8 +23,12 @@ const listenResizer = () => {
     listenMouseUp();
   };
 
-  const moveResizer = () =>
-    window.addEventListener("mousemove", positioningResizer, false);
+  const moveResizer = ({ target }) => {
+    console.log(target)
+    if (target.classList.contains("resizer")) {
+      window.addEventListener("mousemove", positioningResizer, false);
+    }
+  }
 
   window.addEventListener("mousedown", moveResizer, false);
 
