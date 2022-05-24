@@ -53,6 +53,7 @@
         <div class="d-flex">
           <div class="dialogOption--wrapper">
             <button
+              id="view1__btn"
               :class="
                 storagedView === 'view1'
                   ? 'view__button selected__view'
@@ -61,11 +62,15 @@
               ref="view1Btn"
               @click="selectView('view1Btn', 'view1')"
             >
-              <img class="view__image" src="../assets/view1.JPG" />
+              <div class="innerButton__square square__html"></div>
+              <div class="innerButton__square square__js"></div>
+              <div class="innerButton__square square__css"></div>
+              <div class="innerButton__square--preview"></div>
             </button>
           </div>
           <div class="dialogOption--wrapper">
             <button
+              id="view2__btn"
               :class="
                 storagedView === 'view2'
                   ? 'view__button selected__view'
@@ -74,11 +79,15 @@
               ref="view2Btn"
               @click="selectView('view2Btn', 'view2')"
             >
-              <img class="view__image" src="../assets/view2.JPG" />
+              <div class="innerButton__square square__html"></div>
+              <div class="innerButton__square square__js"></div>
+              <div class="innerButton__square square__css"></div>
+              <div class="innerButton__square--preview"></div>
             </button>
           </div>
           <div class="dialogOption--wrapper">
             <button
+              id="view3__btn"
               :class="
                 storagedView === 'view3'
                   ? 'view__button selected__view'
@@ -87,11 +96,15 @@
               ref="view3Btn"
               @click="selectView('view3Btn', 'view3')"
             >
-              <img class="view__image" src="../assets/view3.JPG" />
+              <div class="innerButton__square square__html"></div>
+              <div class="innerButton__square square__js"></div>
+              <div class="innerButton__square square__css"></div>
+              <div class="innerButton__square--preview"></div>
             </button>
           </div>
           <div class="dialogOption--wrapper">
             <button
+              id="view4__btn"
               :class="
                 storagedView === 'view4'
                   ? 'view__button selected__view'
@@ -100,7 +113,10 @@
               ref="view4Btn"
               @click="selectView('view4Btn', 'view4')"
             >
-              <img class="view__image" src="../assets/view4.JPG" />
+              <div class="innerButton__square square__html"></div>
+              <div class="innerButton__square square__js"></div>
+              <div class="innerButton__square square__css"></div>
+              <div class="innerButton__square--preview"></div>
             </button>
           </div>
         </div>
@@ -111,7 +127,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { ref, computed } from "vue";
 import { usePlaygroundStore } from "../store/Playground";
 
 const playgroundStore = usePlaygroundStore();
@@ -133,7 +149,7 @@ const storagedView = computed(() => playgroundStore.view);
 
 const selectTheme = (element, option) => {
   playgroundStore.changeTheme(option);
-  localStorage.setItem('theme', option);
+  localStorage.setItem("theme", option);
 
   darkThemeBtn.value.classList.remove("selected__theme");
   lighThemeBtn.value.classList.remove("selected__theme");
@@ -156,7 +172,7 @@ const selectTheme = (element, option) => {
 };
 const selectView = (element, option) => {
   playgroundStore.changeView(option);
-  localStorage.setItem('view', option);
+  localStorage.setItem("view", option);
 
   view1Btn.value.classList.remove("selected__view");
   view2Btn.value.classList.remove("selected__view");
@@ -179,13 +195,6 @@ const selectView = (element, option) => {
     selectedElement.classList.toggle("selected__view");
   }
 };
-
-const getSelectedOptions = () => {
-  selectedTheme.value = localStorage.getItem("theme");
-  storagedView.value = localStorage.getItem("view");
-};
-
-onMounted(() => getSelectedOptions());
 </script>
 
 <style lang="scss" scoped>
@@ -264,7 +273,7 @@ onMounted(() => getSelectedOptions());
   left: 50%;
   bottom: 30px;
   transform: translateX(-50%);
-  background: linear-gradient(120deg, $primaryColor 50%, $secondaryColor 50%);
+  background: linear-gradient(120deg, white 50%, $primaryColor 50%);
   color: white;
   background-size: 250% 200%;
   background-position: -220px 0px;
@@ -286,13 +295,95 @@ onMounted(() => getSelectedOptions());
   cursor: pointer;
   border: none;
   background: none;
+  padding: 5px;
 
   &:hover {
-    filter: grayscale(1) brightness(2);
+    border: 1px solid white;
   }
 }
 
 .selected__view {
-  filter: grayscale(1) brightness(2);
+  border: 1px solid white;
+}
+
+#view1__btn {
+  display: grid;
+  grid-template-columns: 50px 50px;
+  grid-template-rows: 50px 50px;
+  gap: 2px;
+
+  .innerButton__square {
+    width: 50px;
+    height: 50px;
+  }
+  .innerButton__square--preview {
+    width: 50px;
+    height: 100%;
+    background: white;
+  }
+}
+
+#view2__btn {
+  display: grid;
+  grid-template-columns: 50px 50px 50px;
+  grid-template-rows: 50px 50px;
+  gap: 2px;
+
+  .innerButton__square {
+    width: 50px;
+    height: 100%;
+  }
+  .innerButton__square--preview {
+    width: 100%;
+    height: 100%;
+    background: white;
+    grid-column: 1 / 4;
+  }
+}
+
+#view3__btn {
+  display: grid;
+  grid-template-columns: 50px 50px;
+  grid-template-rows: 50px 50px 50px;
+  gap: 2px;
+
+  .innerButton__square {
+    width: auto;
+    height: 100%;
+  }
+  .innerButton__square--preview {
+    width: auto;
+    height: 100%;
+    background: white;
+    grid-column: 2 / 2;
+    grid-row: 1 / 4;
+  }
+}
+
+#view4__btn {
+  display: grid;
+  grid-template-columns: 50px 50px 50px 50px;
+  grid-template-rows: 100px;
+  gap: 2px;
+
+  .innerButton__square {
+    width: auto;
+    height: 100%;
+  }
+  .innerButton__square--preview {
+    width: auto;
+    height: 100%;
+    background: white;
+  }
+}
+
+.square__html {
+  background: #e34f26;
+}
+.square__js {
+  background: #efd81d;
+}
+.square__css {
+  background: #2173f7;
 }
 </style>

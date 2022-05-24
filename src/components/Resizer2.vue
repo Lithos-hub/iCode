@@ -1,15 +1,19 @@
 <template>
-  <div ref="resizerRow" class="resizer resizer-view-2"></div>
+  <div ref="resizerRowSecond" class="resizer resizer-view-2"></div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+import { usePlaygroundStore } from "../store/Playground";
 
-const resizerRow = ref(null);
+const playgroundStore = usePlaygroundStore();
+
+const view2 = computed(() => playgroundStore.view === "view2");
+const resizerRowSecond = ref(null)
 
 const listenResizer = () => {
-  const preview = document.querySelector("#prewiew");
-  const resizer = resizerRow.value;
+  const viewWrapper = document.querySelector(".view2");
+  const resizer = resizerRowSecond.value;
   const monacoWrapper = document.querySelectorAll(".monaco__wrapper");
 
   const positioningResizer = ({ clientY }) => {
@@ -18,31 +22,41 @@ const listenResizer = () => {
       wrapper.style.minHeight = clientY + "px";
       wrapper.style.maxHeight = clientY + "px";
     });
-    preview.style.top = clientY + "px";
-    preview.style.height = "100%";
+    viewWrapper.style.gridTemplateRows = `${clientY + "px"} 1fr `;
 
     listenMouseUp();
   };
 
   const moveResizer = ({ target }) => {
-    if (target.classList.contains("resizer")) {
-      window.addEventListener("mousemove", positioningResizer, false);
+    if (target.classList.contains("resizer") && view2) {
+      viewWrapper.addEventListener("mousemove", positioningResizer, false);
     }
-  }
-
-  window.addEventListener("mousedown", moveResizer, false);
+  };
+  resizer.addEventListener("mousedown", moveResizer, false);
 
   const listenMouseUp = () => {
     window.addEventListener("mouseup", () => {
-      window.removeEventListener("mousemove", positioningResizer, false);
+      viewWrapper.removeEventListener("mousemove", positioningResizer, false);
     });
   };
 };
 
-onMounted(() => setTimeout(() => listenResizer(), 1000));
+onMounted(() => {
+  if (view2) {
+    setTimeout(() => listenResizer(), 1000);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
+@mixin repeat($character, $n) {
+  $c: "";
+  @for $i from 1 through $n {
+    $c: $c + $character;
+  }
+  content: $c;
+}
+
 .resizer-view-2 {
   position: absolute;
   width: 100vw;
@@ -54,9 +68,10 @@ onMounted(() => setTimeout(() => listenResizer(), 1000));
   padding-block: 2px;
 
   &:before {
-    content: "||||||||||||||||||||||||||||||||||||";
+    @include repeat("|", 20);
     position: absolute;
     font-size: 7px;
+    letter-spacing: 2px;
     color: white;
     left: 50%;
     top: 0;
