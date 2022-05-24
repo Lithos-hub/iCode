@@ -25,7 +25,6 @@ const listenResizer = () => {
   };
 
   const moveResizer = ({ target }) => {
-    console.log(target)
     if (target.classList.contains("resizer")) {
       window.addEventListener("mousemove", positioningResizer, false);
     }

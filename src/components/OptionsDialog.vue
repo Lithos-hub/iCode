@@ -111,7 +111,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+import { usePlaygroundStore } from "../store/Playground";
+
+const playgroundStore = usePlaygroundStore();
 
 const emit = defineEmits(["closeDialog", "selectedTheme", "selectedView"]);
 
@@ -125,13 +128,12 @@ const view2Btn = ref(null);
 const view3Btn = ref(null);
 const view4Btn = ref(null);
 
-const selectedTheme = ref("");
-const storagedView = ref("");
+const selectedTheme = computed(() => playgroundStore.theme);
+const storagedView = computed(() => playgroundStore.view);
 
 const selectTheme = (element, option) => {
-  emit("selectedTheme", option);
-
-  storagedView.value = option;
+  playgroundStore.changeTheme(option);
+  localStorage.setItem('theme', option);
 
   darkThemeBtn.value.classList.remove("selected__theme");
   lighThemeBtn.value.classList.remove("selected__theme");
@@ -153,7 +155,8 @@ const selectTheme = (element, option) => {
   }
 };
 const selectView = (element, option) => {
-  emit("selectedView", option);
+  playgroundStore.changeView(option);
+  localStorage.setItem('view', option);
 
   view1Btn.value.classList.remove("selected__view");
   view2Btn.value.classList.remove("selected__view");

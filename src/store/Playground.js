@@ -5,6 +5,8 @@ export const usePlaygroundStore = defineStore('playgroundStore', {
         htmlValue: '',
         cssValue: '',
         jsValue: '',
+        theme: localStorage.getItem('theme') || 'vs-dark',
+        view: localStorage.getItem('view') || 'view1',
     }),
     actions: {
         writeHTML (payload) {
@@ -15,6 +17,12 @@ export const usePlaygroundStore = defineStore('playgroundStore', {
         },
         writeJS (payload) {
             this.jsValue = payload;
+        },
+        changeTheme (payload) {
+            this.theme = payload;
+        },
+        changeView (payload) {
+            this.view = payload;
         }
     }
 });

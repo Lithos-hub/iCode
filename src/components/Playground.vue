@@ -1,7 +1,7 @@
 <template>
-  <div ref="playground" class="view3">
+  <div ref="playground" :class="playgroundStore.view">
     <div class="monaco__wrapper">
-      <div id="monaco-editor-html"></div>
+      <div id="monaco-editor-html" :key="componentKey"></div>
       <img
         class="tech__image"
         :src="`./img/html.png`"
@@ -11,7 +11,7 @@
       />
     </div>
     <div class="monaco__wrapper">
-      <div id="monaco-editor-javascript"></div>
+      <div id="monaco-editor-javascript" :key="componentKey"></div>
       <img
         class="tech__image"
         :src="`./img/javascript.png`"
@@ -21,7 +21,7 @@
       />
     </div>
     <div class="monaco__wrapper">
-      <div id="monaco-editor-css"></div>
+      <div id="monaco-editor-css" :key="componentKey"></div>
       <img
         class="tech__image"
         :src="`./img/css.png`"
@@ -30,10 +30,14 @@
         :alt="`Editor technology (css)`"
       />
     </div>
-    <Resizer2 v-if="view === 'view2' || storagedView === 'view2'" />
-    <Resizer3 v-if="view === 'view3' || storagedView === 'view3'" />
+    <Resizer2
+      v-if="playgroundStore.view === 'view2'"
+    />
+    <Resizer3
+      v-if="playgroundStore.view === 'view3'"
+    />
     <div class="preview__wrapper" id="prewiew">
-      <iframe srcdoc="Let's code!"></iframe>
+      <iframe srcdoc=""></iframe>
     </div>
   </div>
 </template>
@@ -43,29 +47,13 @@ import loader from "@monaco-editor/loader";
 import { onMounted, ref, watch, computed } from "vue";
 import Resizer2 from "./Resizer2.vue";
 import Resizer3 from "./Resizer3.vue";
-import { usePlaygroundStore } from '../store/Playground';
+import { usePlaygroundStore } from "../store/Playground";
 
 // STORE
 
 const playgroundStore = usePlaygroundStore();
 
-// PROPS
-const props = defineProps({
-  theme: {
-    type: String,
-    default: "vs-dark",
-  },
-  view: {
-    type: String,
-    default: "view1",
-  },
-});
-
-const { theme, view } = props;
-
 // REFS
-const storagedTheme = ref("");
-const storagedView = ref("");
 const playground = ref(null);
 
 const htmlCode = computed(() => playgroundStore.htmlValue);
@@ -73,15 +61,16 @@ const cssCode = computed(() => playgroundStore.cssValue);
 const jsCode = computed(() => playgroundStore.jsValue);
 
 const counter = ref(0);
+const componentKey = ref(0);
 
 // WATCHERS
 
 watch(
-  () => theme,
-  () => reloadMonaco()
+  () => playgroundStore.theme,
+  () => refreshMonaco()
 );
 watch(
-  () => view,
+  () => playgroundStore.view,
   (newView) => changeView(newView)
 );
 
@@ -90,29 +79,20 @@ watch(
 const update = () => $("iframe").setAttribute("srcdoc", createHTML());
 const $ = (selector) => document.querySelector(selector);
 
+const refreshMonaco = () => {
+  componentKey.value++
+  reloadMonaco();
+};
+
 const reloadMonaco = () => {
-  setTimeout(() => {
-    loadMonacoHTML();
-    loadMonacoCSS();
-    loadMonacoJavascript();
-  }, 250);
+  console.log("Reloading...");
+  loadMonacoHTML();
+  loadMonacoCSS();
+  loadMonacoJavascript();
 };
 
 const changeView = (view) => {
   playground.value.classList.add(view);
-};
-
-const loadView = () => {
-  const view = localStorage.getItem("view") || "view1";
-  storagedView.value = view;
-  playground.value.classList.remove("view1");
-  playground.value.classList.remove("view2");
-  playground.value.classList.remove("view3");
-  playground.value.classList.add(view);
-};
-
-const loadTheme = () => {
-  storagedTheme.value = localStorage.getItem("theme");
 };
 
 const loadMonacoHTML = () => {
@@ -121,8 +101,9 @@ const loadMonacoHTML = () => {
     let editor = monaco.editor.create(monacoHTML, {
       value: htmlCode.value,
       language: "html",
-      theme: `${theme || storagedTheme.value}`,
+      theme: playgroundStore.theme,
       automaticLayout: true,
+      minimap: { enabled: false },
     });
     monacoHTML.addEventListener("keypress", () => {
       setTimeout(() => {
@@ -138,8 +119,9 @@ const loadMonacoJavascript = () => {
     let editor = monaco.editor.create(monacoJS, {
       value: jsCode.value,
       language: "javascript",
-      theme: `${theme || storagedTheme.value}`,
+      theme: playgroundStore.theme,
       automaticLayout: true,
+      minimap: { enabled: false },
     });
     let counterInterval = null;
     monacoJS.addEventListener("keypress", () => {
@@ -167,8 +149,9 @@ const loadMonacoCSS = () => {
     let editor = monaco.editor.create(monacoCSS, {
       value: cssCode.value,
       language: "css",
-      theme: `${theme || storagedTheme.value}`,
+      theme: playgroundStore.theme,
       automaticLayout: true,
+      minimap: { enabled: false },
     });
     monacoCSS.addEventListener("keypress", () => {
       setTimeout(() => {
@@ -195,10 +178,10 @@ const createHTML = () => {
 // LIFECYCLE
 
 onMounted(() => {
-  loadView();
-  loadTheme();
-  reloadMonaco();
-  update();
+  setTimeout(() => {
+    reloadMonaco();
+    update();
+  }, 1000);
 });
 </script>
 
@@ -225,8 +208,22 @@ onMounted(() => {
   position: relative;
   margin: 0 auto;
   height: 100vh;
-  gap: 10px;
   overflow: hidden;
+
+    #monaco-editor-html,
+  #monaco-editor-javascript,
+  #monaco-editor-css {
+    position: relative;
+    width: 48vw;
+    height: 50vh;
+  }
+
+    .preview__wrapper {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    width: 100%;
+  }
 }
 .view2 {
   display: grid;
@@ -243,19 +240,17 @@ onMounted(() => {
   #monaco-editor-javascript,
   #monaco-editor-css {
     position: relative;
-    width: 100%;
+    width: 31.5vw;
     height: 100%;
   }
 
   .preview__wrapper {
     position: absolute;
     padding-left: 70px;
-    height: 100%;
-    margin-top: 10px;
-    bottom: 0;
+    margin: 0;
     top: 50%;
-    min-width: 100vw;
-    width: 100%;
+    height: 100vh;
+    width: 96.5vw;
   }
 }
 

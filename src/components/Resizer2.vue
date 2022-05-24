@@ -19,12 +19,12 @@ const listenResizer = () => {
       wrapper.style.maxHeight = clientY + "px";
     });
     preview.style.top = clientY + "px";
+    preview.style.height = "100%";
 
     listenMouseUp();
   };
 
   const moveResizer = ({ target }) => {
-    console.log(target)
     if (target.classList.contains("resizer")) {
       window.addEventListener("mousemove", positioningResizer, false);
     }
@@ -47,7 +47,7 @@ onMounted(() => setTimeout(() => listenResizer(), 1000));
   position: absolute;
   width: 100vw;
   height: 10px;
-  top: 50vh;
+  top: 48.3vh;
   z-index: 999;
   background: linear-gradient(to right, #0b0b0b, rgb(9, 9, 9));
   border-block: 1px solid rgba(255, 255, 255, 0.45);
