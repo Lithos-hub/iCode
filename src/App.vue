@@ -1,6 +1,8 @@
 <template>
+<div class="d-flex">
   <Navbar />
   <Playground />
+</div>
 </template>
 
 <script setup>
@@ -10,4 +12,5 @@ import Playground from "./components/Playground.vue";
 
 <style lang="scss">
 @import "./scss/app.scss";
+
 </style>

@@ -4,7 +4,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
+
+const view1 = computed(() => playgroundStore.view === "view1");
 
 const resizerRowFourthX = ref(null);
 const resizerRowFourthY = ref(null);
@@ -40,9 +42,7 @@ const listenResizer = () => {
 };
 
 onMounted(() => {
-  // const view2 = document.querySelector(".view2");
-  // view2.replaceWith(view2.cloneNode(true));
-  setTimeout(() => listenResizer(), 1000);
+  if (view1) setTimeout(() => listenResizer(), 50);
 });
 </script>
 

@@ -46,9 +46,7 @@ const setView = (view) => {
   z-index: 9999;
   height: 100vh;
   width: 70px;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   background: linear-gradient(120deg, black, rgb(15, 14, 14));
   box-shadow: inset 0px 0px 10px black;
   display: grid;
@@ -92,21 +90,4 @@ const setView = (view) => {
   }
 }
 
-.theme__button--highContrast {
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-  width: 50px;
-  height: 50px;
-  margin: 0 auto;
-  border: none;
-  background: rgb(255, 174, 0);
-  border-radius: 50%;
-  border: 1px solid transparent;
-
-  &:hover {
-    background: none;
-    color: white;
-    border: 1px solid white;
-  }
-}
 </style>

@@ -1,34 +1,16 @@
 <template>
-  <div class="playground__wrapper" ref="playground" :class="playgroundStore.view">
+  <div
+    ref="playground"
+    :class="'view playground__wrapper ' + playgroundStore.view"
+  >
     <div class="monaco__wrapper">
       <div id="monaco-editor-html" :key="componentKey"></div>
-      <!-- <img
-        class="tech__image"
-        :src="`./img/html.png`"
-        width="50"
-        height="50"
-        :alt="`Editor technology (html)`"
-      /> -->
     </div>
     <div class="monaco__wrapper">
       <div id="monaco-editor-javascript" :key="componentKey"></div>
-      <!-- <img
-        class="tech__image"
-        :src="`./img/javascript.png`"
-        width="50"
-        height="50"
-        :alt="`Editor technology (javascript)`"
-      /> -->
     </div>
     <div class="monaco__wrapper">
       <div id="monaco-editor-css" :key="componentKey"></div>
-      <!-- <img
-        class="tech__image"
-        :src="`./img/css.png`"
-        width="50"
-        height="50"
-        :alt="`Editor technology (css)`"
-      /> -->
     </div>
     <Resizer1 v-if="playgroundStore.view === 'view1'" :key="componentKey" />
     <Resizer2 v-if="playgroundStore.view === 'view2'" :key="componentKey" />
@@ -46,6 +28,7 @@ import Resizer2 from "./Resizer2.vue";
 import Resizer3 from "./Resizer3.vue";
 import { usePlaygroundStore } from "../store/Playground";
 import Resizer1 from "./Resizer1.vue";
+import { $ } from "../utils/Constants";
 
 // STORE
 
@@ -72,20 +55,20 @@ watch(
   () => playgroundStore.view,
   (newView) => {
     changeView(newView);
-    resetStyles();
+    setGridStyles();
   }
 );
 
 // METHODS
 
 const update = () => $("iframe").setAttribute("srcdoc", createHTML());
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
+// const $ = (selector) => document.querySelector(selector);
+// const $$ = (selector) => document.querySelectorAll(selector);
 
 const refreshMonaco = () => {
   componentKey.value++;
   reloadMonaco();
-  resetStyles();
+  setGridStyles();
 };
 
 const reloadMonaco = () => {
@@ -176,53 +159,50 @@ const createHTML = () => {
   </html>`;
 };
 
-const resetStyles = () => {
-  console.log('Reseting styles!')
+const setGridStyles = () => {
+  console.log("Reseting styles...");
+
   const preview = $(".preview__wrapper");
-  preview.classList.remove(".preview__wrapper");
-  preview.classList.add(".preview__wrapper");
-  const monacoWrapper = $$(".monaco__wrapper");
 
-  const view1 = $('.view1')
-  const view2 = $('.view2')
-  const view3 = $('.view3')
-  const view4 = $('.view4')
+  const navbarWidth = 70;
+  const columnWidthView1 = navbarWidth / 2 + 'px';
+  const columnWidthView2 = navbarWidth / 3 + 'px';
+  const columnWidthView3 = navbarWidth / 2 + 'px';
+  const columnWidthView4 = navbarWidth / 4 + 'px';
 
-  if (selectedView.value === 'view1') {
-    view1.style.gridTemplateColumns = '1fr 1fr'
-    view1.style.gridTemplateRows = '1fr 1fr'
+  if (selectedView.value === "view1") {
+    const view1 = $(".view1");
+    view1.style.gridTemplateColumns = `calc(100vw / 2 - ${columnWidthView1}) `.repeat(2);
+    view1.style.gridTemplateRows = "50vh 50vh";
+    preview.style.gridRow = "2 / 2";
+    preview.style.gridColumn = "2 / 2";
   }
-  if (selectedView.value === 'view2') {
-    view2.style.gridTemplateColumns = '1fr 1fr 1fr'
-    view2.style.gridTemplateRows = '1fr 1fr'
+  if (selectedView.value === "view2") {
+    const view2 = $(".view2");
+    view2.style.gridTemplateColumns = `calc(100vw / 3 - ${columnWidthView2}) `.repeat(3);
+    view2.style.gridTemplateRows = "50vh 50vh";
+    preview.style.gridRow = "2 / 2";
+    preview.style.gridColumn = "1 / 4";
   }
-  if (selectedView.value === 'view3') {
-    view3.style.gridTemplateColumns = '1fr 1fr'
-    view3.style.gridTemplateRows = '1fr 1fr 1fr'
+  if (selectedView.value === "view3") {
+    const view3 = $(".view3");
+    view3.style.gridTemplateColumns = `calc(100vw / 2 - ${columnWidthView3}) `.repeat(2);
+    view3.style.gridTemplateRows = "33.33vh 33.33vh 33.33vh";
+    preview.style.gridRow = "1 / span 3";
+    preview.style.gridColumn = "2 / 2";
   }
-  if (selectedView.value === 'view4') {
-    view4.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
+  if (selectedView.value === "view4") {
+    const view4 = $(".view4");
+    view4.style.gridTemplateColumns = `calc(100vw / 4 - ${columnWidthView4}) `.repeat(4);
+    view4.style.gridTemplateRows = "100vh";
+    preview.style.gridColumn = "4 / 4";
+    preview.style.gridRow = "1 / 1";
   }
-
-
-  monacoWrapper.forEach((wrapper) => {
-    wrapper.style.minHeight = "initial";
-    wrapper.style.minWidth = "initial";
-    wrapper.style.maxHeight = "initial";
-    wrapper.style.maxWidth = "initial";
-  });
-  monacoWrapper.forEach((wrapper) => {
-    wrapper.classList.remove('.monaco__wrapper');
-  });
-  monacoWrapper.forEach((wrapper) => {
-    wrapper.classList.add('.monaco__wrapper');
-  });
 
   preview.style.top = "initial";
   preview.style.left = "initial";
   preview.style.width = "initial";
   preview.style.height = "initial";
-
 };
 
 // LIFECYCLE
@@ -231,8 +211,8 @@ onMounted(() => {
   setTimeout(() => {
     reloadMonaco();
     update();
-    resetStyles();
-  }, 1000);
+    setGridStyles();
+  }, 50);
 });
 </script>
 
@@ -245,33 +225,33 @@ onMounted(() => {
 }
 
 #monaco-editor-html:after {
-  content: '';
-  background: url('../../public/img/html.png');
+  content: "";
+  background: url("../../public/img/html.png");
   background-size: cover;
   width: 50px;
   height: 50px;
   position: absolute;
-  bottom: 1rem;
+  bottom: 2rem;
   right: 2rem;
 }
 #monaco-editor-javascript:after {
-  content: '';
-  background: url('../../public/img/javascript.png');
+  content: "";
+  background: url("../../public/img/javascript.png");
   background-size: cover;
   width: 50px;
   height: 50px;
   position: absolute;
-  bottom: 1rem;
+  bottom: 2rem;
   right: 2rem;
 }
 #monaco-editor-css:after {
-  content: '';
-  background: url('../../public/img/css.png');
+  content: "";
+  background: url("../../public/img/css.png");
   background-size: cover;
   width: 50px;
   height: 50px;
   position: absolute;
-  bottom: 1rem;
+  bottom: 2rem;
   right: 2rem;
 }
 
@@ -286,96 +266,57 @@ onMounted(() => {
   overflow: auto;
 }
 
-.view1 {
+.view {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  padding-left: 60px;
   position: relative;
-  margin: 0 auto;
+  margin: 0;
   height: 100vh;
-  max-height: 100vh;
-  width: auto;
-  max-width: 100vw;
+  width: calc(100% - 70px);
+  margin-right: 0px;
   overflow: hidden;
+}
+
+.view1 {
 
   .monaco__wrapper {
     position: relative;
     bottom: 0;
   }
 
-  #monaco-editor-html,
-  #monaco-editor-javascript,
-  #monaco-editor-css {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 250px;
-    min-width: 250px;
-  }
-
   .preview__wrapper {
     position: relative;
     height: 100%;
     width: 100%;
     margin: 0;
+    grid-column: 2 / 2;
+    grid-row: 2 / 2;
   }
 }
 
 .view2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  padding-left: 60px;
-  position: relative;
-  margin: 0 auto;
-  height: 100vh;
-  gap: 5px;
-  overflow: hidden;
-
-  #monaco-editor-html,
-  #monaco-editor-javascript,
-  #monaco-editor-css {
-    position: relative;
-    width: 31.5vw;
-    height: 100%;
-  }
 
   .preview__wrapper {
     position: relative;
-    padding-left: 60px;
     margin: 0;
     top: 50%;
     height: 100%;
-    width: 100%;
+    width: 100vw;
     grid-column: 1 / 4;
+    grid-row: 2 / 2;
   }
 }
 
 .view3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  position: relative;
-  padding-left: 60px;
-  margin: 0;
-  min-width: 49vw;
-  width: auto;
-  height: 100vh;
-  gap: 5px;
-  overflow: hidden;
-
   #monaco-editor-html,
   #monaco-editor-javascript,
   #monaco-editor-css {
-    position: relative;
-    width: 100%;
     height: 33vh;
     grid-column: 1 / 2;
   }
   .preview__wrapper {
     position: relative;
     width: 100%;
+    height: 100vh;
     margin: 0;
     grid-column: 2 / 2;
     grid-row: 1 / span 3;
@@ -383,18 +324,18 @@ onMounted(() => {
 }
 
 .view4 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
-  padding-left: 60px;
-  .monaco__wrapper {
-    display: block;
+
+  #monaco-editor-html,
+  #monaco-editor-javascript,
+  #monaco-editor-css {
+    height: 100vh;
   }
 
   .preview__wrapper {
     position: relative;
-    min-height: 100vh;
-    width: 100%;
+    height: 100vh;
+    margin: 0;
+    grid-column: 4 / 4;
   }
 }
 

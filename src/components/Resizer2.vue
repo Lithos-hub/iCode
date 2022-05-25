@@ -5,6 +5,7 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { usePlaygroundStore } from "../store/Playground";
+import { $ } from "../utils/Constants";
 
 const playgroundStore = usePlaygroundStore();
 
@@ -12,39 +13,38 @@ const view2 = computed(() => playgroundStore.view === "view2");
 const resizerRowSecond = ref(null)
 
 const listenResizer = () => {
-  const viewWrapper = document.querySelector(".view2");
+  const view = $(".view2");
   const resizer = resizerRowSecond.value;
-  const monacoWrapper = document.querySelectorAll(".monaco__wrapper");
 
   const positioningResizer = ({ clientY }) => {
+    const middleScreenHeight = window.innerHeight / 2;
+    const frameDifference = middleScreenHeight - clientY;
     resizer.style.top = clientY + "px";
-    monacoWrapper.forEach((wrapper) => {
-      wrapper.style.minHeight = clientY + "px";
-      wrapper.style.maxHeight = clientY + "px";
-    });
-    viewWrapper.style.gridTemplateRows = `${clientY + "px"} 1fr `;
+    if (clientY < middleScreenHeight) {
+      view.style.gridTemplateRows = `${middleScreenHeight - frameDifference}px auto`;
+    } else if (clientY > middleScreenHeight) {
+      view.style.gridTemplateRows = `auto ${middleScreenHeight + frameDifference}px`;
+    }
 
     listenMouseUp();
   };
 
   const moveResizer = ({ target }) => {
     if (target.classList.contains("resizer") && view2) {
-      viewWrapper.addEventListener("mousemove", positioningResizer, false);
+      view.addEventListener("mousemove", positioningResizer, false);
     }
   };
   resizer.addEventListener("mousedown", moveResizer, false);
 
   const listenMouseUp = () => {
     window.addEventListener("mouseup", () => {
-      viewWrapper.removeEventListener("mousemove", positioningResizer, false);
+      view.removeEventListener("mousemove", positioningResizer, false);
     });
   };
 };
 
 onMounted(() => {
-  if (view2) {
-    setTimeout(() => listenResizer(), 1000);
-  }
+  if (view2) setTimeout(() => listenResizer(), 50);
 });
 </script>
 

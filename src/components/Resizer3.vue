@@ -5,6 +5,7 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { usePlaygroundStore } from "../store/Playground";
+import { $, $$ } from "../utils/Constants";
 
 const playgroundStore = usePlaygroundStore();
 
@@ -12,42 +13,42 @@ const view3 = computed(() => playgroundStore.view === "view3");
 const resizerRowThird = ref(null);
 
 const listenResizer = () => {
-  const viewWrapper = document.querySelector(".view3");
+  const view = $(".view3");
   const resizer = resizerRowThird.value;
-  const monacoWrapper = document.querySelectorAll(".monaco__wrapper");
 
   const positioningResizer = ({ clientX }) => {
-    resizer.style.left = clientX + "px";
-    monacoWrapper.forEach((wrapper) => {
-      wrapper.style.minWidth = clientX - 60 + "px";
-      wrapper.style.maxWidth = clientX - 60 + "px";
-    });
-    viewWrapper.style.gridTemplateColumns = `${clientX - 60 + 'px'} 1fr`;
+    console.log('Moving')
+    const middleScreenWidth = window.innerWidth / 2;
+    const frameDifference = middleScreenWidth - (clientX);
+    resizer.style.left = `${clientX - 70}px`;
+    console.log(clientX)
+    if (clientX <= middleScreenWidth) {
+      view.style.gridTemplateColumns = `${middleScreenWidth - frameDifference - 70}px auto`;
+    } else if (clientX >= middleScreenWidth) {
+      view.style.gridTemplateColumns = `auto ${middleScreenWidth + frameDifference}px`;
+    }
 
     listenMouseUp();
   };
 
   const moveResizer = ({ target }) => {
     if (target.classList.contains("resizer") && view3) {
-      viewWrapper.addEventListener("mousemove", positioningResizer, false);
+      view.addEventListener("mousemove", positioningResizer, false);
     }
   };
 
   resizer.addEventListener("mousedown", moveResizer, false);
 
-
   const listenMouseUp = () => {
     window.addEventListener("mouseup", () => {
-      viewWrapper.removeEventListener("mousemove", positioningResizer, false);
+      view.removeEventListener("mousemove", positioningResizer, false);
     });
   };
 };
 
 onMounted(() => {
-  if (view3) {
-    setTimeout(() => listenResizer(), 1000)
-  }
-  });
+  if (view3) setTimeout(() => listenResizer(), 250);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -64,7 +65,7 @@ onMounted(() => {
   width: 10px;
   height: 100vh;
   top: 0vh;
-  left: 51.5vw;
+  left: calc(100vw / 2 - 35px);
   z-index: 999;
   background: linear-gradient(to right, #0b0b0b, rgb(9, 9, 9));
   border-block: 1px solid rgba(255, 255, 255, 0.45);
