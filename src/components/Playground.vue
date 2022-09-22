@@ -62,8 +62,6 @@ watch(
 // METHODS
 
 const update = () => $("iframe").setAttribute("srcdoc", createHTML());
-// const $ = (selector) => document.querySelector(selector);
-// const $$ = (selector) => document.querySelectorAll(selector);
 
 const refreshMonaco = () => {
   componentKey.value++;

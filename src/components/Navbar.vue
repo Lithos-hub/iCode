@@ -23,7 +23,7 @@ const emit = defineEmits(["set-theme", "set-view"]);
 
 const isShowingThemeDialog = ref(false);
 
-const version = "0.5.0";
+const version = "0.6.0";
 
 const showThemeDialog = () => (isShowingThemeDialog.value = true);
 
@@ -62,7 +62,7 @@ const setView = (view) => {
 
 .navbar__brand {
   margin: 0 auto;
-  background: url('../assets/iCode-transparent.png');
+  background: url("../assets/iCode-transparent.png");
   background-size: cover;
   height: 50px;
   width: 50px;
@@ -86,5 +86,4 @@ const setView = (view) => {
     border: 1px solid white;
   }
 }
-
 </style>
