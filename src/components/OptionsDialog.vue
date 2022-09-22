@@ -273,12 +273,11 @@ const selectView = (element, option) => {
   left: 50%;
   bottom: 30px;
   transform: translateX(-50%);
-  background: linear-gradient(120deg, white 50%, $primaryColor 50%);
+  background: linear-gradient(120deg, white, $primaryColor, $secondaryColor);
   color: white;
   background-size: 250% 200%;
   background-position: -220px 0px;
-  font-weight: bolder;
-  font-size: 20px;
+  font-size: 16px;
 
   &:hover {
     background-position: 0px 0px;

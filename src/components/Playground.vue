@@ -89,7 +89,7 @@ const loadMonacoHTML = () => {
       automaticLayout: true,
       minimap: { enabled: false },
     });
-    monacoHTML.addEventListener("keypress", () => {
+    monacoHTML.addEventListener("keydown", () => {
       setTimeout(() => {
         playgroundStore.writeHTML(editor.getValue());
         update();
@@ -108,7 +108,7 @@ const loadMonacoJavascript = () => {
       minimap: { enabled: false },
     });
     let counterInterval = null;
-    monacoJS.addEventListener("keypress", () => {
+    monacoJS.addEventListener("keydown", () => {
       playgroundStore.writeJS(editor.getValue());
       counter.value = 0;
       clearInterval(counterInterval);
@@ -119,7 +119,7 @@ const loadMonacoJavascript = () => {
       (newVal) => {
         if (newVal >= 3) {
           // => JavaScript code only will be rendered after 3 seconds from the last typing
-          jsValue.value = editor.getValue();
+          playgroundStore.writeJS(editor.getValue());
           update();
           clearInterval(counterInterval);
         }
@@ -137,12 +137,22 @@ const loadMonacoCSS = () => {
       automaticLayout: true,
       minimap: { enabled: false },
     });
-    monacoCSS.addEventListener("keypress", () => {
+    monacoCSS.addEventListener("keydown", (e) => {
       setTimeout(() => {
         playgroundStore.writeCSS(editor.getValue());
         update();
       }, 100);
     });
+    watch(
+      () => playgroundStore.cssValue,
+      (newVal, oldVal) => {
+        console.log(newVal, oldVal);
+        if (newVal !== oldVal) {
+          playgroundStore.writeCSS(editor.getValue());
+          update();
+        }
+      }
+    );
   });
 };
 
@@ -165,35 +175,39 @@ const setGridStyles = () => {
   const preview = $(".preview__wrapper");
 
   const navbarWidth = 70;
-  const columnWidthView1 = navbarWidth / 2 + 'px';
-  const columnWidthView2 = navbarWidth / 3 + 'px';
-  const columnWidthView3 = navbarWidth / 2 + 'px';
-  const columnWidthView4 = navbarWidth / 4 + 'px';
+  const columnWidthView1 = navbarWidth / 2 + "px";
+  const columnWidthView2 = navbarWidth / 3 + "px";
+  const columnWidthView3 = navbarWidth / 2 + "px";
+  const columnWidthView4 = navbarWidth / 4 + "px";
 
   if (selectedView.value === "view1") {
     const view1 = $(".view1");
-    view1.style.gridTemplateColumns = `calc(100vw / 2 - ${columnWidthView1}) `.repeat(2);
+    view1.style.gridTemplateColumns =
+      `calc(100vw / 2 - ${columnWidthView1}) `.repeat(2);
     view1.style.gridTemplateRows = "50vh 50vh";
     preview.style.gridRow = "2 / 2";
     preview.style.gridColumn = "2 / 2";
   }
   if (selectedView.value === "view2") {
     const view2 = $(".view2");
-    view2.style.gridTemplateColumns = `calc(100vw / 3 - ${columnWidthView2}) `.repeat(3);
+    view2.style.gridTemplateColumns =
+      `calc(100vw / 3 - ${columnWidthView2}) `.repeat(3);
     view2.style.gridTemplateRows = "50vh 50vh";
     preview.style.gridRow = "2 / 2";
     preview.style.gridColumn = "1 / 4";
   }
   if (selectedView.value === "view3") {
     const view3 = $(".view3");
-    view3.style.gridTemplateColumns = `calc(100vw / 2 - ${columnWidthView3}) `.repeat(2);
+    view3.style.gridTemplateColumns =
+      `calc(100vw / 2 - ${columnWidthView3}) `.repeat(2);
     view3.style.gridTemplateRows = "33.33vh 33.33vh 33.33vh";
     preview.style.gridRow = "1 / span 3";
     preview.style.gridColumn = "2 / 2";
   }
   if (selectedView.value === "view4") {
     const view4 = $(".view4");
-    view4.style.gridTemplateColumns = `calc(100vw / 4 - ${columnWidthView4}) `.repeat(4);
+    view4.style.gridTemplateColumns =
+      `calc(100vw / 4 - ${columnWidthView4}) `.repeat(4);
     view4.style.gridTemplateRows = "100vh";
     preview.style.gridColumn = "4 / 4";
     preview.style.gridRow = "1 / 1";
@@ -222,6 +236,11 @@ onMounted(() => {
 
 .playground__wrapper {
   position: relative;
+}
+
+.monaco-editor .lines-content.monaco-editor-background,
+.margin-view-overlays {
+  margin-top: 15px;
 }
 
 #monaco-editor-html:after {
@@ -260,9 +279,11 @@ onMounted(() => {
 #monaco-editor-css {
   transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
   position: relative;
-  width: 100%;
+  width: calc(100% - 7px);
+  margin-right: 2.5px;
   height: 100%;
   resize: vertical;
+  resize: horizontal;
   overflow: auto;
 }
 
@@ -277,12 +298,6 @@ onMounted(() => {
 }
 
 .view1 {
-
-  .monaco__wrapper {
-    position: relative;
-    bottom: 0;
-  }
-
   .preview__wrapper {
     position: relative;
     height: 100%;
@@ -294,7 +309,6 @@ onMounted(() => {
 }
 
 .view2 {
-
   .preview__wrapper {
     position: relative;
     margin: 0;
@@ -324,7 +338,6 @@ onMounted(() => {
 }
 
 .view4 {
-
   #monaco-editor-html,
   #monaco-editor-javascript,
   #monaco-editor-css {

@@ -20,11 +20,7 @@ const listenResizer = () => {
     const middleScreenHeight = window.innerHeight / 2;
     const frameDifference = middleScreenHeight - clientY;
     resizer.style.top = clientY + "px";
-    if (clientY < middleScreenHeight) {
-      view.style.gridTemplateRows = `${middleScreenHeight - frameDifference}px auto`;
-    } else if (clientY > middleScreenHeight) {
-      view.style.gridTemplateRows = `auto ${middleScreenHeight + frameDifference}px`;
-    }
+    view.style.gridTemplateRows = `${middleScreenHeight - frameDifference}px ${middleScreenHeight + frameDifference}px`;
 
     listenMouseUp();
   };
@@ -61,7 +57,7 @@ onMounted(() => {
   position: absolute;
   width: 100vw;
   height: 10px;
-  top: 48.3vh;
+  top: calc(100vh / 2 - 15px);
   z-index: 999;
   background: linear-gradient(to right, #0b0b0b, rgb(9, 9, 9));
   border-block: 1px solid rgba(255, 255, 255, 0.45);
@@ -71,12 +67,11 @@ onMounted(() => {
     @include repeat("|", 20);
     position: absolute;
     font-size: 7px;
-    letter-spacing: 2px;
+    letter-spacing: 5px;
     color: white;
-    left: 50%;
+    left: calc(100vw / 2 - 95px);
     top: 0;
     height: 0px;
-    padding: 0;
   }
 
   &:hover {

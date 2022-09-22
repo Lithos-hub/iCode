@@ -17,16 +17,10 @@ const listenResizer = () => {
   const resizer = resizerRowThird.value;
 
   const positioningResizer = ({ clientX }) => {
-    console.log('Moving')
     const middleScreenWidth = window.innerWidth / 2;
-    const frameDifference = middleScreenWidth - (clientX);
+    const frameDifference = middleScreenWidth - clientX;
     resizer.style.left = `${clientX - 70}px`;
-    console.log(clientX)
-    if (clientX <= middleScreenWidth) {
-      view.style.gridTemplateColumns = `${middleScreenWidth - frameDifference - 70}px auto`;
-    } else if (clientX >= middleScreenWidth) {
-      view.style.gridTemplateColumns = `auto ${middleScreenWidth + frameDifference}px`;
-    }
+    view.style.gridTemplateColumns = `${middleScreenWidth - frameDifference - 70}px ${middleScreenWidth + frameDifference}px`;
 
     listenMouseUp();
   };
@@ -76,9 +70,9 @@ onMounted(() => {
     position: absolute;
     transform: rotate(90deg);
     font-size: 7px;
+    letter-spacing: 5px;
     color: white;
-    left: 0%;
-    top: 50%;
+    top: calc(100vh / 2 - 55px);
     width: 12px;
     padding: 0;
   }

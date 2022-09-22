@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <h1 class="navbar__brand">iC</h1>
+    <div class="navbar__brand"></div>
     <button class="theme__button" @click="showThemeDialog">
       <mdicon name="cog" />
     </button>
@@ -47,8 +47,8 @@ const setView = (view) => {
   height: 100vh;
   width: 70px;
   position: relative;
-  background: linear-gradient(120deg, black, rgb(15, 14, 14));
-  box-shadow: inset 0px 0px 10px black;
+  background: linear-gradient(0deg, rgb(19, 19, 19), rgb(0, 0, 0));
+  // box-shadow: inset 0px 0px 20px black;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
@@ -61,15 +61,12 @@ const setView = (view) => {
 }
 
 .navbar__brand {
-  font-size: 50px;
-  text-align: center;
   margin: 0 auto;
-  font-weight: lighter;
-  background: linear-gradient(120deg, $primaryColor, $secondaryColor);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  height: 70px;
-  width: 70px;
+  background: url('../assets/iCode-transparent.png');
+  background-size: cover;
+  height: 50px;
+  width: 50px;
+  margin-top: 2vh;
 }
 
 .theme__button {
