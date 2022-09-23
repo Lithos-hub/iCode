@@ -55,7 +55,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("mouseup");
+  window.removeEventListener("mouseup", false);
   view.removeEventListener("mousemove", positioningResizer, false);
   resizerY.removeEventListener("mousedown", moveResizer, false);
   resizerX.removeEventListener("mousedown", moveResizer, false);
