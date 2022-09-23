@@ -23,7 +23,7 @@ const emit = defineEmits(["set-theme", "set-view"]);
 
 const isShowingThemeDialog = ref(false);
 
-const version = "0.6.0";
+const version = import.meta.env.VITE_APP_VERSION;
 
 const showThemeDialog = () => (isShowingThemeDialog.value = true);
 

@@ -10,7 +10,7 @@ import { $ } from "../utils/Constants";
 const playgroundStore = usePlaygroundStore();
 
 const view2 = computed(() => playgroundStore.view === "view2");
-const resizerRowSecond = ref(null)
+const resizerRowSecond = ref(null);
 
 const listenResizer = () => {
   const view = $(".view2");
@@ -20,7 +20,9 @@ const listenResizer = () => {
     const middleScreenHeight = window.innerHeight / 2;
     const frameDifference = middleScreenHeight - clientY;
     resizer.style.top = clientY + "px";
-    view.style.gridTemplateRows = `${middleScreenHeight - frameDifference}px ${middleScreenHeight + frameDifference}px`;
+    view.style.gridTemplateRows = `${middleScreenHeight - frameDifference}px ${
+      middleScreenHeight + frameDifference
+    }px`;
 
     listenMouseUp();
   };

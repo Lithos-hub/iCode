@@ -5,7 +5,7 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { usePlaygroundStore } from "../store/Playground";
-import { $, $$ } from "../utils/Constants";
+import { $ } from "../utils/Constants";
 
 const playgroundStore = usePlaygroundStore();
 
@@ -20,7 +20,9 @@ const listenResizer = () => {
     const middleScreenWidth = window.innerWidth / 2;
     const frameDifference = middleScreenWidth - clientX;
     resizer.style.left = `${clientX - 70}px`;
-    view.style.gridTemplateColumns = `${middleScreenWidth - frameDifference - 70}px ${middleScreenWidth + frameDifference}px`;
+    view.style.gridTemplateColumns = `${
+      middleScreenWidth - frameDifference - 70
+    }px ${middleScreenWidth + frameDifference}px`;
 
     listenMouseUp();
   };

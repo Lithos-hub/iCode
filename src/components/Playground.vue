@@ -45,6 +45,8 @@ const counter = ref(0);
 const componentKey = ref(0);
 const selectedView = computed(() => playgroundStore.view);
 
+const debounceJSTimeout = ref();
+
 // WATCHERS
 
 watch(
@@ -105,24 +107,13 @@ const loadMonacoJavascript = () => {
       automaticLayout: true,
       minimap: { enabled: false },
     });
-    let counterInterval = null;
     monacoJS.addEventListener("keydown", () => {
-      playgroundStore.writeJS(editor.getValue());
-      counter.value = 0;
-      clearInterval(counterInterval);
-      counterInterval = setInterval(() => (counter.value += 1), 1000);
+      if (debounceJSTimeout.value) clearTimeout(debounceJSTimeout.value);
+      debounceJSTimeout.value = setTimeout(() => {
+        playgroundStore.writeJS(editor.getValue());
+        update();
+      }, 1000);
     });
-    watch(
-      () => counter.value,
-      (newVal) => {
-        if (newVal >= 3) {
-          // => JavaScript code only will be rendered after 3 seconds from the last typing
-          playgroundStore.writeJS(editor.getValue());
-          update();
-          clearInterval(counterInterval);
-        }
-      }
-    );
   });
 };
 const loadMonacoCSS = () => {

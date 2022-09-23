@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import { $ } from "../utils/Constants";
 
 const view1 = computed(() => playgroundStore.view === "view1");
@@ -24,8 +24,12 @@ const listenResizer = () => {
     const frameDifferenceX = middleScreenWidth - clientX;
     resizerX.style.top = clientY + "px";
     resizerY.style.left = `${clientX - 70}px`;
-    view.style.gridTemplateRows = `${middleScreenHeight - frameDifferenceY}px ${middleScreenHeight + frameDifferenceY}px`;
-    view.style.gridTemplateColumns = `${middleScreenWidth - frameDifferenceX - 70}px ${middleScreenWidth + frameDifferenceX}px`;
+    view.style.gridTemplateRows = `${middleScreenHeight - frameDifferenceY}px ${
+      middleScreenHeight + frameDifferenceY
+    }px`;
+    view.style.gridTemplateColumns = `${
+      middleScreenWidth - frameDifferenceX - 70
+    }px ${middleScreenWidth + frameDifferenceX}px`;
 
     listenMouseUp();
   };
@@ -48,6 +52,13 @@ const listenResizer = () => {
 
 onMounted(() => {
   if (view1) setTimeout(() => listenResizer(), 50);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("mouseup");
+  view.removeEventListener("mousemove", positioningResizer, false);
+  resizerY.removeEventListener("mousedown", moveResizer, false);
+  resizerX.removeEventListener("mousedown", moveResizer, false);
 });
 </script>
 
